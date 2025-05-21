@@ -181,3 +181,11 @@ body {
 .noticia a:hover {
   text-decoration: underline;
 }
+
+#weather {
+  display: none;
+}
+
+#weather.show {
+  display: block;
+}
