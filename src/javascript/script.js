@@ -28,7 +28,7 @@ document.querySelector('#search').addEventListener('submit', async (event) => {
       humidity: json.main.humidity,
     });
     buscarAlertas(cityName);
-    buscarNoticias(cityName); // <-- Agora isso vai funcionar!
+    buscarNoticias(cityName);
   } else {
     document.querySelector("#weather").classList.remove('show');
     showAlert(`
@@ -57,7 +57,7 @@ function showAlert(msg) {
   document.querySelector('#alert').innerHTML = msg;
 }
 
-const backendURL = 'https://alerta-do-tempo1-production.up.railway.app';
+const backendURL = 'https://alerta-do-tempo1-production.up.railway.app/';
 
 async function buscarAlertas(cidade) {
   const resultado = document.getElementById('alertas-result');
@@ -90,13 +90,12 @@ async function buscarAlertas(cidade) {
   }
 }
 
-// ✅ Agora sim: buscarNoticias fora de tudo
 async function buscarNoticias(cidade) {
   const noticiasDiv = document.getElementById('noticias-result');
   noticiasDiv.innerHTML = '📰 Buscando notícias...';
 
   try {
-    const resposta = await fetch(`https://sua-api-alertas.onrender.com/api/noticias?cidade=${encodeURIComponent(cidade)}`);
+    const resposta = await fetch(`https://alerta-do-tempo1-production.up.railway.app/api/noticias?cidade=${encodeURIComponent(cidade)}`);
     const dados = await resposta.json();
 
     if (!dados.noticias || dados.noticias.length === 0) {
