@@ -27,6 +27,7 @@ document.querySelector('#search').addEventListener('submit', async (event) => {
             windSpeed: json.wind.speed,
             humidity: json.main.humidity,
         });
+        buscarAlertas(cityName);
     } else {
         document.querySelector("#weather").classList.remove('show');
         showAlert(`
@@ -56,4 +57,37 @@ function showInfo(json){
 
 function showAlert(msg) {
     document.querySelector('#alert').innerHTML = msg;
+}
+const backendURL = 'https://alerta-do-tempo1-production.up.railway.app';
+
+async function buscarAlertas(cidade) {
+  const resultado = document.getElementById('alertas-result');
+
+  resultado.innerHTML = '🔄 Buscando alertas...';
+
+  try {
+    const resposta = await fetch(`${backendURL}/api/alertas?cidade=${encodeURIComponent(cidade)}`);
+    const dados = await resposta.json();
+
+    if (!dados.alertas || dados.alertas.length === 0) {
+      resultado.innerHTML = `<p>✅ Sem alertas atuais para <strong>${cidade}</strong>.</p>`;
+      return;
+    }
+
+    resultado.innerHTML = `<p>🚨 ${dados.alertas.length} alerta(s) para <strong>${cidade}</strong>:</p>`;
+
+    dados.alertas.forEach(alerta => {
+      const div = document.createElement('div');
+      div.classList.add('alerta');
+      div.innerHTML = `
+        <h3>${alerta.event}</h3>
+        <p><strong>Início:</strong> ${new Date(alerta.start * 1000).toLocaleString()}</p>
+        <p><strong>Fim:</strong> ${new Date(alerta.end * 1000).toLocaleString()}</p>
+        <p>${alerta.description}</p>
+      `;
+      resultado.appendChild(div);
+    });
+  } catch (erro) {
+    resultado.innerHTML = `<p style="color:red;">❌ Erro ao buscar alertas: ${erro.message}</p>`;
+  }
 }
